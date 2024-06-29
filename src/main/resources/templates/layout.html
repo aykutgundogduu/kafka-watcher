@@ -1,0 +1,44 @@
+<html lang="en" data-layout="twocolumn" data-topbar="light" data-sidebar="light" data-sidebar-size="lg"	data-sidebar-image="none" data-preloader="disable" xmlns="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+	<th:block layout:fragment="pagetitle" />
+	<!-- Page CSS -->
+	<div th:replace="~{partials/head-css :: head-css}"></div>
+</head>
+
+<body data-sidebar="dark" data-layout-mode="light">
+	
+	<div id="layout-wrapper">
+		<div th:replace="~{partials/topbar :: topbar}"></div>
+
+		<div th:replace="~{partials/sidebar :: sidebar}"></div>
+
+		<div class="main-content">
+			<div class="page-content">
+				<div class="container-fluid">
+
+					<section layout:fragment="content" th:remove="tag">
+
+					</section>
+				</div>
+			</div>
+			<div th:replace="~{partials/footer :: footer}"></div>
+		</div>
+	</div>
+	
+	<div th:if="${page} == 'appchat'" th:remove="tag">
+		<div th:replace="~{partials/app-chat-userprofile-canvas :: offcanvas}"></div>	
+	</div>
+	
+	<th:block layout:fragment="modal" />
+
+	<div th:replace="~{partials/customizer :: customizer}"></div>
+	
+	<div th:replace="~{partials/vendor-scripts :: scripts}"></div>
+
+	<th:block layout:fragment="pagejs" />
+	<!-- App js -->
+	<script th:src="@{/assets/js/app.js}"></script>
+</body>
+
+</html>

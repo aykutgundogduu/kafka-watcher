@@ -1,0 +1,430 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout}">
+
+<th:block layout:fragment="pagetitle">
+	<!--page title-->
+	<div th:replace="~{partials/title-meta :: title-meta('Kafka Cluster Dashboard')}"></div>
+</th:block>
+
+<head>
+	<link href="/assets/libs/swiper/swiper-bundle.min.css" rel="stylesheet" />
+	<!--datatable css-->
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
+	<!--datatable responsive css-->
+	<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" />
+
+	<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
+	<!-- Sweet Alert css-->
+	<link href="/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+	<div layout:fragment="content">
+		<!-- start page title -->
+		<div th:replace="~{partials/page-title :: page-title('Kafka Cluster','Dashboards')}"></div>
+		<!-- end page title -->
+		
+		<!-- Cluster details bar starts-->
+		<div class="col-xxl-12 order-xxl-0 order-first">
+			<div class="d-flex flex-column h-44">
+				<div class="row h-44">
+					<div class="col-lg-3 col-md-6">
+						<div class="card">
+							<div class="card-body">
+								<div class="d-flex align-items-center">
+									<div class="avatar-sm flex-shrink-0">
+										<span class="avatar-title bg-light text-primary rounded-circle fs-3">
+											<i class="ri-hard-drive-fill align-middle"></i>
+										</span>
+									</div>
+									<div class="flex-grow-1 ms-3">
+										<p class="text-uppercase fw-bold fs-13 text-muted mb-1">Total Disk Segment</p>
+										<h4 class=" mb-0">GB <span class="counter-value" 
+												th:data-target="${#aggregates.sum(Clusters.![#aggregates.sum(kafka.bootstrapServers.![getTotalDiskUsage()])])}">0</span></h4>
+									</div>
+								</div>
+							</div><!-- end card body -->
+						</div><!-- end card -->
+					</div><!-- end col -->
+					<div class="col-lg-3 col-md-6">
+						<div class="card">
+							<div class="card-body">
+								<div class="d-flex align-items-center">
+									<div class="avatar-sm flex-shrink-0">
+										<span class="avatar-title bg-light text-primary rounded-circle fs-3">
+											<i class="ri-download-cloud-2-fill align-middle"></i>
+										</span>
+									</div>
+									<div class="flex-grow-1 ms-3">
+										<p class="text-uppercase fw-bold fs-13 text-muted mb-1">Total Consumer Groups</p>
+										<h4 class=" mb-0"><span class="counter-value"
+												th:data-target="${#aggregates.sum(Clusters.![getConsumerGroups().size()])}">0</span></h4>
+									</div>
+									
+								</div>
+							</div><!-- end card body -->
+						</div><!-- end card -->
+					</div><!-- end col -->
+					<div class="col-lg-3 col-md-6">
+						<div class="card">
+							<div class="card-body">
+								<div class="d-flex align-items-center">
+									<div class="avatar-sm flex-shrink-0">
+										<span class="avatar-title bg-light text-primary rounded-circle fs-3">
+											<i class="ri-upload-cloud-2-fill align-middle"></i>
+										</span>
+									</div>
+									<div class="flex-grow-1 ms-3">
+										<p class="text-uppercase fw-bold fs-13 text-muted mb-1">Total Producer</p>
+										<h4 class=" mb-0"><span class="counter-value"
+												th:data-target="${#aggregates.sum(Clusters.![getTotalProducers(getTopics())])}">0</span></h4>
+									</div>
+								</div>
+							</div><!-- end card body -->
+						</div><!-- end card -->
+					</div><!-- end col -->
+					<div class="col-lg-3 col-md-6">
+						<div class="card">
+							<div class="card-body">
+								<div class="d-flex align-items-center">
+									<div class="avatar-sm flex-shrink-0">
+										<span class="avatar-title bg-light text-primary rounded-circle fs-3">
+											<i class=" ri-server-fill align-middle"></i>
+										</span>
+									</div>
+									<div class="flex-grow-1 ms-3">
+										<p class="text-uppercase fw-bold fs-13 text-muted mb-1">Total Bootstrap Servers</p>
+										<h4 class=" mb-0"><span class="counter-value"
+												th:data-target="${#aggregates.sum(Clusters.![getTotalBootstrapServers(getKafka())])}">0</span></h4>
+									</div>
+								</div>
+							</div><!-- end card body -->
+						</div><!-- end card -->
+					</div><!-- end col -->
+					
+					<div class="col-lg-6 col-md-6">
+						<div class="card">
+							<div class="card-body">
+								<div class="d-flex align-items-center">
+									<div class="avatar-sm flex-shrink-0">
+										<span class="avatar-title bg-light text-primary rounded-circle fs-3">
+											<i class="ri-pie-chart-2-fill align-middle"></i>
+										</span>
+									</div>
+									<div class="flex-grow-1 ms-3">
+										<p class="text-uppercase fw-bold fs-13 text-muted mb-1">Total Partition</p>
+										<h4 class=" mb-0"><span class="counter-value"
+												th:data-target="${#aggregates.sum(Clusters.![getTotalPartitions(getTopics())])}">0</span></h4>
+									</div>
+								</div>
+							</div><!-- end card body -->
+						</div><!-- end card -->
+					</div><!-- end col -->
+					<div class="col-lg-6 col-md-6">
+						<div class="card">
+							<div class="card-body">
+								<div class="d-flex align-items-center">
+									<div class="avatar-sm flex-shrink-0">
+										<span class="avatar-title bg-light text-primary rounded-circle fs-3">
+											<i class="ri-signal-tower-fill align-middle"></i>
+										</span>
+									</div>
+									<div class="flex-grow-1 ms-3">
+										<p class="text-uppercase fw-bold fs-13 text-muted mb-1">Total Lag by Consumer</p>
+										<h4 class=" mb-0"><span class="counter-value"
+												th:data-target="${#aggregates.sum(Clusters.![getTotalLag(getConsumerGroups())])}">0</span></h4>
+									</div>
+								</div>
+							</div><!-- end card body -->
+						</div><!-- end card -->
+					</div><!-- end col -->
+				</div><!-- end row -->
+
+			</div>
+		</div><!-- Cluster details bar end -->
+		<!--Clusters state row start-->
+		
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="swiper cryptoSlider">
+					<div class="swiper-wrapper">
+						<th:block th:each="cluster :${Clusters}">
+							<div class="swiper-slide">
+								<div class="card">
+									<div class="card-body">
+										<i class=" ri-refresh-fill text-warning fs-24 float-end align-middle"></i>
+										<div class="d-flex align-items-center">
+											<i class="ri-bubble-chart-fill"></i>
+											<h6 class="ms-2 mb-0" th:text="${cluster.getName()}"></h6>
+										</div>
+										<div class="row align-items-end g-0">
+											<div class="col-6">
+												<h5 class="mb-1 mt-2">Status :
+													<i th:if="${cluster.isClusterStatusAvailable()}" class="ri-arrow-up-circle-line text-success fs-18 align-middle"></i>
+													<i th:if="not ${cluster.isClusterStatusAvailable()}" class="ri-arrow-up-circle-line text-danger fs-18 align-middle"></i>
+												</h5>
+												<p class="fw-medium mb-0">
+													Last pool time:
+												</p>
+												<p class="fw-medium mb-0">
+													Next pool time:
+												</p>
+												<p class="fw-medium mb-0">
+													Nodes: <span class="text-danger fs-13 fw-medium mb-0" th:text="${cluster.getKafka().getUnavailableNodes().size()}"></span> /  <span class="text-success fs-13 fw-medium mb-0" th:text="${cluster.getKafka().getAvailableNodes().size()}"></span>
+												</p>
+											</div><!-- end col -->
+										</div><!-- end row -->
+									</div><!-- end card body -->
+								</div><!-- end card -->
+							</div><!-- end -->
+						</th:block>
+
+					</div><!-- end swiper wrapper -->
+				</div><!-- end swiper -->
+			</div><!-- end col -->
+		</div><!-- end row -->
+		<!--Clusters state row end-->
+
+		<div class="row">
+			<div class="col-xxl-4">
+				<div class="card card-height-100">
+					<div class="card-header border-0 align-items-center d-flex">
+						<h4 class="card-title mb-0 flex-grow-1">All Clusters</h4>
+						<div>
+							<div class="dropdown">
+								<button class="btn btn-soft-primary btn-sm" data-bs-toggle="dropdown"
+									aria-haspopup="true" aria-expanded="false">
+									<span class="text-uppercase">All Clusters<i
+											class="mdi mdi-chevron-down align-middle ms-1"></i></span>
+								</button>
+								<div class="dropdown-menu dropdown-menu-end">
+									<a class="dropdown-item" href="/Dashboard/cluster/all">*</a>
+									<th:block th:each="cluster : ${Clusters}">
+										<a class="dropdown-item" th:href="'/Dashboard/cluster/' + ${cluster.getName()}" th:text="${cluster.getName()}"></a>
+									</th:block>
+								</div>
+							</div>
+						</div>
+					</div><!-- end cardheader -->
+					<div class="card-body">
+						<div id="clusterDiskSegmentPie"
+							th:data-series="|[${#strings.arrayJoin(Clusters.![#aggregates.sum(kafka.bootstrapServers.![getTotalDiskUsage()])],',')}]|" th:data-labels="|[${#strings.arrayJoin(Clusters.!['&quot;' + getName() + '&quot;'], ',')}]|"
+							data-total-text="Total Segment" data-format='["GB"]'
+							class="apex-charts" dir="ltr"></div>
+
+						<ul class="list-group list-group-flush border-dashed mb-0 mt-3 pt-2" th:each="cluster : ${Clusters}">
+							<li class="list-group-item px-0">
+								<div class="d-flex">
+									<div class="flex-shrink-0 avatar-xs">
+										<span class="avatar-title bg-dark p-1 rounded-circle">
+											<i class="ri-bubble-chart-fill"></i>
+										</span>
+									</div>
+									<div class="flex-grow-1 ms-2">
+										<h6 class="mb-1" th:text="${cluster.getName()}"></h6>
+										<p class="fs-13 mb-0 text-muted"><i
+												class="mdi mdi-circle fs-10 align-middle text-primary me-1"></i>Total disk usage</p>
+									</div>
+									<div class="flex-shrink-0 text-end">
+										<h6 class="mb-1">Usable <span th:text="${#aggregates.sum(cluster.kafka.getBootstrapServers().![getUsableGB()])}"></span> GB</h6>
+										<p class="text-success fs-13 mb-0"><span th:text="${#aggregates.sum(cluster.kafka.getBootstrapServers().![getTotalDiskUsage])}"></span> GB</p>
+									</div>
+								</div>
+							</li><!-- end -->
+						</ul><!-- end -->
+					</div><!-- end card body -->
+				</div><!-- end card -->
+			</div><!-- end col -->
+
+			<div class="col-xxl-4">
+				<div class="card card-height-100">
+					<div class="card-header align-items-center d-flex">
+						<h4 class="card-title mb-0 flex-grow-1">Messages by Topics</h4>
+					</div>
+					<div class="card-body p-0">
+						<div>
+							<div id="messagesByTopics",
+								data-series-name='["Messages"]'
+								th:data-series="|[${#strings.arrayJoin(Clusters.![#strings.arrayJoin(getTopics().![getTotalMessageCount()],',') ?: '0'],',')}]|"
+								th:data-labels="|[${#strings.arrayJoin(Clusters.![#strings.arrayJoin(getTopics().!['&quot;' + getTopicName() + '&quot;'],',') ?: '&quot;Empty Cluster&quot;'],',')}]|"
+								class="apex-charts" dir="ltr"></div>
+						</div>
+					</div><!-- end card body -->
+				</div><!-- end card -->
+			</div> <!-- end col-->
+
+
+			<div class="col-xxl-4">
+				<div class="card card-height-100">
+					<div class="card-header align-items-center d-flex">
+						<h4 class="card-title mb-0 flex-grow-1">Partitions by Topics</h4>
+					</div>
+					<div class="card-body p-0">
+						<div>
+							<div id="partitionsByTopics"
+								data-series-name='["Partitions"]'
+								th:data-series="|[${#strings.arrayJoin(Clusters.![#strings.arrayJoin(getTopics().![getPartitions().size()],',') ?: '0'],',')}]|"
+								th:data-labels="|[${#strings.arrayJoin(Clusters.![#strings.arrayJoin(getTopics().!['&quot;' + getTopicName() + '&quot;'],',') ?: '&quot;Empty Cluster&quot;'],',')}]|"
+								class="apex-charts" dir="ltr"></div>
+						</div>
+					</div><!-- end card body -->
+				</div><!-- end card -->
+			</div> <!-- end col-->
+
+
+		</div>
+		
+		<!-- end row -->
+		<div class="col-xxl-12">
+			<h5 class="mb-12">Cluster Details</h5>
+			<div class="card">
+				<div class="card-body">
+					<!-- Nav tabs -->
+					<ul class="nav nav-pills nav-customs nav-danger mb-12" role="tablist">
+						<li class="nav-item">
+							<a class="nav-link active" data-bs-toggle="tab" href="#cluster-dashboard-nav-nodes"
+								role="tab">Bootstrap Servers</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" data-bs-toggle="tab" href="#cluster-dashboard-nav-metrics"
+								role="tab">Metrics</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" data-bs-toggle="tab" href="#cluster-dashboard-nav-settings"
+								role="tab">Settings</a>
+						</li>
+					</ul>
+					<!-- Tab panes -->
+					<div class="tab-content text-muted">
+						<!--Bootstrap servers-->
+						<div class="tab-pane row active" id="cluster-dashboard-nav-nodes" role="tabpanel">
+							<!-- Small Tables -->
+							<table id="alternative-pagination-dashboard"
+							class="table nowrap dt-responsive align-middle table-hover table-bordered"
+							style="width:100%">
+								<thead>
+									<tr>
+										<th scope="col">Cluster</th>
+										<th scope="col">Ip</th>
+										<th scope="col">Dns</th>
+										<th scope="col">Directory</th>
+									</tr>
+								</thead>
+								<tbody>
+									<th:block  th:each="cluster : ${Clusters}">
+										<th:block th:each="server : ${cluster.getKafka().getBootstrapServers()}">
+											<tr>
+												<th scope="row" th:text="${cluster.getName()}"></th>
+												<td th:text="${server.getIpAndPort()}"></td>
+												<td th:text="${server.getDns()}"></td>
+												<td th:text="${server.getLogDir()}"></td>
+											</tr>
+										</th:block>
+									</th:block>
+								</tbody>
+							</table>
+						</div>
+						<!--Metrics-->
+						<div class="tab-pane row" id="cluster-dashboard-nav-metrics" role="tabpanel">
+							<!-- Small Tables -->
+							<table id="alternative-pagination-metrics"
+							class="table nowrap dt-responsive align-middle table-hover table-bordered"
+							style="width:100%">
+								<thead>
+									<tr>
+										<th scope="col">Cluster</th>
+										<th scope="col">Key</th>
+										<th scope="col">Value</th>
+									</tr>
+								</thead>
+								<tbody>
+									<th:block th:each="cluster : ${Clusters}">
+										<th:block th:each="metrics : ${cluster.getClusterMetrics()}">
+											<tr>
+												<th scope="row" th:text="${cluster.getName()}"></th>
+												<td th:text="${metrics.getName()}"></td>
+												<td th:text="${metrics.getValue()}"></td>
+											</tr>
+										</th:block>
+									</th:block>
+								</tbody>
+							</table>
+						</div>
+						<div class="tab-pane row" id="cluster-dashboard-nav-settings" role="tabpanel">
+							<table id="alternative-pagination-settings"
+							class="table nowrap dt-responsive align-middle table-hover table-bordered"
+							style="width:100%">
+								<thead>
+									<tr>
+										<th scope="col">Cluster</th>
+										<th scope="col">Server</th>
+										<th scope="col">Key</th>
+										<th scope="col">Value</th>
+										<th scope="col">Read-only</th>
+										<th scope="col">Sensitive</th>
+										<th scope="col">Documentation</th>
+									</tr>
+								</thead>
+								<tbody>
+									<th:block th:each="cluster : ${Clusters}">
+										<th:block th:each="server : ${cluster.getKafka().getBootstrapServers()}">
+											<th:block th:each="config : ${server.getBootstrapServerConfigs()}">
+												<tr>
+													<th scope="row" th:text="${cluster.getName()}"></th>
+													<td th:text="${server.getIpAndPort()}"></td>
+													<td th:text="${config.getName()}"></td>
+													<td th:text="${config.getValue()}"></td>
+													<td><span th:class="${config.getIsReadOnly() ? 'badge bg-success-subtle text-success' : 'badge bg-success-subtle text-danger'}"  th:text="${config.getIsReadOnly()}"></span></td>
+													<td><span th:class="${config.getIsSensitive() ? 'badge bg-success-subtle text-success' : 'badge bg-success-subtle text-danger'}"  th:text="${config.getIsSensitive()}"></span></td>
+													<td th:text="${config.getDocumentation()}"></td>
+												</tr>
+											</th:block>
+										</th:block>
+									</th:block>
+								</tbody>
+							</table>
+						</div>
+						<!-- end row -->
+					</div>
+				</div><!-- end card-body -->
+			</div>
+		</div>
+
+	</div>
+	
+	<th:block layout:fragment="pagejs">
+
+
+
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+		integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+		<!--datatable js-->
+		<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+		<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+		<script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+		<script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+		<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+		<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+
+		<!-- datatables init -->
+		<script src="/assets/js/pages/kafka/kafka-datatables-init.js"></script>
+
+		<!-- apexcharts -->
+		<script src="/assets/libs/apexcharts/apexcharts.min.js"></script>
+		<!-- swiper -->
+		<script src="/assets/libs/swiper/swiper-bundle.min.js"></script>
+		<!--Modal init-->
+		<script src="/assets/js/pages/kafka/kafka-modal-init.js"></script>
+		<!--Kafka chart init-->
+		<script src="/assets/js/pages/kafka/kafka-charts-init.js"></script>
+		<script src="/assets/js/pages/kafka/kafka-form.js"></script>
+		<script src="/assets/js/pages/kafka/kafka-swiper-init.js"></script>
+	</th:block>
+</body>
+
+</html>
