@@ -543,7 +543,7 @@ public class ClusterService implements ClusterInterface {
         for (BootstrapServers servers : cluster.getKafka().getBootstrapServers()) {
             cluster.getTopics().stream().map(m -> m.getPartitions()).forEach(f -> {
                 f.forEach(fe -> {
-                    fe.getIsr().
+                    //fe.getIsr().
                 });
             });
         }
