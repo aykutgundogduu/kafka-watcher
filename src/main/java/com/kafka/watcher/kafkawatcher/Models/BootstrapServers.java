@@ -1,29 +1,62 @@
 package com.kafka.watcher.kafkawatcher.Models;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class BootstrapServers {
 
-    private List<Partition> isrPartitions;
-    private List<Partition> leaderPartition;
-    private List<Partition> replicaPartition;
+    private List<Partition> isrPartitions = new ArrayList<>();
+    private List<Partition> leaderPartitions = new ArrayList<>();
+    private List<Partition> replicaPartitions = new ArrayList<>();
+
+
     public List<Partition> getIsrPartitions() {
         return isrPartitions;
     }
     public void setIsrPartitions(List<Partition> isrPartitions) {
         this.isrPartitions = isrPartitions;
     }
+    public void addIsrPartitition(Partition isrPartition)
+    {
+        this.isrPartitions.add(isrPartition);
+    }
+    public void clearIsrPatitions(){
+        this.isrPartitions.clear();
+    }
     public List<Partition> getLeaderPartition() {
-        return leaderPartition;
+        return leaderPartitions;
     }
+
     public void setLeaderPartition(List<Partition> leaderPartition) {
-        this.leaderPartition = leaderPartition;
+        this.leaderPartitions = leaderPartition;
     }
-    public List<Partition> getReplicaPartition() {
-        return replicaPartition;
+
+    public void addLeaderPartition(Partition leadePartition)
+    {
+        this.leaderPartitions.add(leadePartition);
     }
-    public void setReplicaPartition(List<Partition> replicaPartition) {
-        this.replicaPartition = replicaPartition;
+
+    public void clearLeaderPartitions()
+    {
+        this.leaderPartitions.clear();
+    }
+
+    public List<Partition> getReplicaPartitions() {
+        return replicaPartitions;
+    }
+
+    public void setReplicaPartition(List<Partition> replicaPartitions) {
+        this.replicaPartitions = replicaPartitions;
+    }
+
+    public void addReplicaPartition(Partition replicaPartition)
+    {
+        this.replicaPartitions.add(replicaPartition);
+    }
+
+    public void clearReplicaPartitions(){
+        this.replicaPartitions.clear();
     }
 
     private boolean isConnected;

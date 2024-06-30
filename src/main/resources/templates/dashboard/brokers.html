@@ -42,7 +42,12 @@
 									<th class="sort" data-sort="clusterName">Cluster Name</th>
 									<th class="sort" data-sort="brokerId">Broker Id</th>
 									<th class="sort" data-sort="partitionSize">Partition Size</th>
-									<th class="sort" data-sort="partitionCount">Partition Count</th>
+									<th class="sort" data-sort="partitionCount">Partition Count
+										<br>
+										<span>ISR /</span>
+										<span>LEAD /</span>
+										<span>REP</span>
+									</th>
 									<th class="sort" data-sort="ipPort">IP/Port</th>
 									<th class="sort" data-sort="dns">DNS</th>
 									<th class="sort" data-sort="logDir">DNS</th>
@@ -61,8 +66,14 @@
 												</th>
 												<td class="clusterName"> <span th:text="${cluster.getName()}"></span></td>
 												<td class="brokerId"> <span th:text="${server.getNodeId()}"></span></td>
-												<td class="partitionSize"> <span th:text="${server.getTotalDiskUsage()}"></span></td>
-												<td class="partitionCount"> <span th:text="${server.getTotalDiskUsage()}"></span></td>
+												<td class="partitionSize"> <span th:text="${server.getLeaderPartition().size()}"></span></td>
+												<td class="partitionCounts"> 
+													<span th:text="${server.getIsrPartitions().size()}"></span>
+													<span>/</span>
+													<span th:text="${server.getLeaderPartition().size()}"></span>
+													<span>/</span>
+													<span th:text="${server.getReplicaPartitions().size()}"></span>
+												</td>
 												<td class="ipPort"> <span th:text="${server.getIpAndPort()}"></span></td>
 												<td class="dns"> <span th:text="${server.getDns()}"></span></td>
 												<td class="logDir"> <span th:text="${server.getLogDir()}"></span></td>

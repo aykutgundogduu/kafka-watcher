@@ -1,6 +1,5 @@
 package com.kafka.watcher.kafkawatcher.Service;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,34 +9,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
-import org.apache.kafka.clients.NetworkClient;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.Config;
-import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.DescribeClusterResult;
 import org.apache.kafka.clients.admin.DescribeLogDirsResult;
 import org.apache.kafka.clients.admin.DescribeProducersResult;
 import org.apache.kafka.clients.admin.DescribeProducersResult.PartitionProducerState;
 import org.apache.kafka.clients.admin.DescribeTopicsResult;
-import org.apache.kafka.clients.admin.KafkaAdminClient;
 import org.apache.kafka.clients.admin.ListOffsetsResult;
-import org.apache.kafka.clients.admin.ListTopicsOptions;
 import org.apache.kafka.clients.admin.ListTopicsResult;
 import org.apache.kafka.clients.admin.LogDirDescription;
-import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.admin.OffsetSpec;
 import org.apache.kafka.clients.admin.ReplicaInfo;
 import org.apache.kafka.clients.admin.TopicDescription;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.Metric;
@@ -47,13 +36,9 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.TopicPartitionInfo;
 import org.apache.kafka.common.config.ConfigResource;
 import org.apache.kafka.common.config.ConfigResource.Type;
-import org.springframework.boot.autoconfigure.kafka.KafkaConnectionDetails;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.unit.DataSize;
-import org.springframework.web.util.UriBuilder;
 
 import com.kafka.watcher.kafkawatcher.Exceptions.ReadOnlyException;
 import com.kafka.watcher.kafkawatcher.Exceptions.UniqueValueException;
@@ -69,8 +54,7 @@ import com.kafka.watcher.kafkawatcher.Models.PartitionsOffset;
 import com.kafka.watcher.kafkawatcher.Models.Producer;
 import com.kafka.watcher.kafkawatcher.Models.Topic;
 
-import reactor.core.publisher.Mono;
-import reactor.util.retry.Retry;
+import groovyjarjarantlr4.v4.parse.GrammarTreeVisitor.astOperand_return;
 
 @Service
 public class ClusterService implements ClusterInterface {
@@ -223,8 +207,6 @@ public class ClusterService implements ClusterInterface {
                     Map<Integer, Map<String, LogDirDescription>> logDirsResult = cluster.getAdminClient().describeLogDirs(replicaNodes).allDescriptions().get();
                     for (Map<String, LogDirDescription> logDirs : logDirsResult.values()) {
                         for (LogDirDescription logDir : logDirs.values()) {
-                            System.out.println(topic.getTopicName());
-                            System.out.println("partitionInfo.partition(): " + partitionInfo.partition() + " -- " + "logDirs.values().size(): " + logDirs.values().size());
 
                             List<Entry<TopicPartition, ReplicaInfo>> infos = logDir.replicaInfos().entrySet().stream().filter(f -> f.getKey().partition() == partitionInfo.partition())
                             .filter(f-> f.getKey().topic().equals(topic.getTopicName())).toList();
@@ -232,7 +214,6 @@ public class ClusterService implements ClusterInterface {
                             for (Entry<TopicPartition, ReplicaInfo> info : infos) {
                                 parsedPartitions.stream().filter(f -> f.getPartitionId() == info.getKey().partition())
                                 .forEach(e -> e.addReplicas(info));
-                                System.out.println(info.getValue());
                             }
 
                         }   
@@ -540,10 +521,34 @@ public class ClusterService implements ClusterInterface {
     @Override
     public void applyPartitionsToNodes(Cluster cluster) {
 
-        for (BootstrapServers servers : cluster.getKafka().getBootstrapServers()) {
+        for (BootstrapServers server : cluster.getKafka().getBootstrapServers()) {
+            server.clearIsrPatitions();
+            server.clearLeaderPartitions();
+            server.clearReplicaPartitions();
             cluster.getTopics().stream().map(m -> m.getPartitions()).forEach(f -> {
                 f.forEach(fe -> {
-                    //fe.getIsr().
+
+                    if(server.getNodeId() == fe.getLeader().id())
+                    {
+                        server.addLeaderPartition(fe);
+                        System.err.println(fe.getPartitionId());
+                        
+                    }
+
+                    fe.getIsr().forEach(isr -> {
+                        if(server.getNodeId() == isr.id())
+                        {
+                            server.addIsrPartitition(fe);
+                        }
+                    });
+
+                    fe.getReplicaNodes().forEach(replica -> {
+                        if(server.getNodeId() == replica.id())
+                        {
+                            server.addReplicaPartition(fe);
+                        }
+                    });
+                    
                 });
             });
         }
