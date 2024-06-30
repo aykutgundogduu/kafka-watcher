@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.kafka.common.Uuid;
+import org.springframework.util.unit.DataSize;
 
 
 public class Topic {
@@ -59,7 +60,7 @@ public class Topic {
 
     public Long getTotalReplicaMessageSize()
     {
-        return this.getPartitions().stream().mapToLong(f -> f.getReplicaSize()).sum();
+        return DataSize.ofBytes(this.getPartitions().stream().mapToLong(f -> f.getReplicaSize()).sum()).toGigabytes();
     }
     public int getReplicationFactorCount()
     {
