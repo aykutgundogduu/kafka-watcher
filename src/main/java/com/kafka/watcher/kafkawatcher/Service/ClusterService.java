@@ -531,7 +531,6 @@ public class ClusterService implements ClusterInterface {
                     if(server.getNodeId() == fe.getLeader().id())
                     {
                         server.addLeaderPartition(fe);
-                        System.err.println(fe.getPartitionId());
                         
                     }
 
