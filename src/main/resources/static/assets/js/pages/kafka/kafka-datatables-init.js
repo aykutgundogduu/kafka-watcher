@@ -28,7 +28,12 @@ document.addEventListener('DOMContentLoaded', function () {
     $('#alternative-pagination-metrics').DataTable();
     $('#alternative-pagination-dashboard').DataTable();
     $('#alternative-pagination-settings').DataTable();
-
+    $('#alternative-pagination-consumer-groups').DataTable();
+    $('#alternative-pagination-consumer-partitions').DataTable();
+    $('#alternative-pagination-producers').DataTable();
+    $('#alternative-pagination-producer-partitions').DataTable();
+    $('#topic-dashboard-nav-consumers').DataTable();
+    
 
 });
 

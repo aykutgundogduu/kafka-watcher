@@ -1,6 +1,14 @@
 package com.kafka.watcher.kafkawatcher.Models;
 
 public class Producer {
+
+    private Topic topic;
+    public Topic getTopic() {
+        return topic;
+    }
+    public void setTopic(Topic topic) {
+        this.topic = topic;
+    }
     private Long producerId;
     public Long getProducerId() {
         return producerId;
@@ -23,11 +31,12 @@ public class Producer {
         this.currentTransactionStartOffset = currentTransactionStartOffset;
     }
     private int sequence;
-    public Producer(Long producerId, int producerEpoch, Long currentTransactionStartOffset, int sequence) {
+    public Producer(Long producerId, int producerEpoch, Long currentTransactionStartOffset, int sequence,Topic topic) {
         this.producerId = producerId;
         this.producerEpoch = producerEpoch;
         this.currentTransactionStartOffset = currentTransactionStartOffset;
         this.sequence = sequence;
+        this.topic = topic;
     }
     public int getSequence() {
         return sequence;

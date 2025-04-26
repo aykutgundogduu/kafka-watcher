@@ -159,16 +159,18 @@
 											<h6 class="ms-2 mb-0" th:text="${cluster.getName()}"></h6>
 										</div>
 										<div class="row align-items-end g-0">
-											<div class="col-6">
+											<div class="col-12">
 												<h5 class="mb-1 mt-2">Status :
 													<i th:if="${cluster.isClusterStatusAvailable()}" class="ri-arrow-up-circle-line text-success fs-18 align-middle"></i>
-													<i th:if="not ${cluster.isClusterStatusAvailable()}" class="ri-arrow-up-circle-line text-danger fs-18 align-middle"></i>
+													<i th:if="not ${cluster.isClusterStatusAvailable()}" class="ri-arrow-down-circle-line text-danger fs-18 align-middle"></i>
 												</h5>
 												<p class="fw-medium mb-0">
 													Last pool time:
+													<span th:text="${cluster.getFormattedDate(cluster.getLastPoolDate())}"></span>
 												</p>
 												<p class="fw-medium mb-0">
 													Next pool time:
+													<span th:text="${cluster.getFormattedDate(cluster.getNextPoolDate())}"></span>
 												</p>
 												<p class="fw-medium mb-0">
 													Nodes: <span class="text-danger fs-13 fw-medium mb-0" th:text="${cluster.getKafka().getUnavailableNodes().size()}"></span> /  <span class="text-success fs-13 fw-medium mb-0" th:text="${cluster.getKafka().getAvailableNodes().size()}"></span>
@@ -276,6 +278,9 @@
 		</div>
 		
 		<!-- end row -->
+
+
+		<!--Cluster details row start-->
 		<div class="col-xxl-12">
 			<h5 class="mb-12">Cluster Details</h5>
 			<div class="card">
@@ -390,6 +395,146 @@
 				</div><!-- end card-body -->
 			</div>
 		</div>
+		<!--Cluster details row end-->
+		
+		<!--Consumers row start-->
+		<div class="col-xxl-12">
+			<h5 class="mb-12">Consumer Groups</h5>
+			<div class="card">
+				<div class="card-body">
+					<!-- Nav tabs -->
+					<ul class="nav nav-pills nav-customs nav-danger mb-12" role="tablist">
+						<li class="nav-item">
+							<a class="nav-link active" data-bs-toggle="tab" href="#cluster-consumers-nav-consumers"
+								role="tab">Consumers</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" data-bs-toggle="tab" href="#cluster-consumers-nav-partitions"
+								role="tab">Partitions</a>
+						</li>
+					</ul>
+					<!-- Tab panes -->
+					<div class="tab-content text-muted">
+						<!--Consumer groups-->
+						<div class="tab-pane row active" id="cluster-consumers-nav-consumers" role="tabpanel">
+							<!-- Small Tables -->
+							<table id="alternative-pagination-consumer-groups"
+							class="table nowrap dt-responsive align-middle table-hover table-bordered"
+							style="width:100%">
+								<thead>
+									<tr>
+										<th scope="col">Group</th>
+										<th scope="col">Simple Consumer Group</th>
+										<th scope="col">Partition Offsets</th>
+										<th scope="col">State</th>
+									</tr>
+								</thead>
+								<tbody>
+									<th:block  th:each="cluster : ${Clusters}">
+										<th:block th:each="consumerGroup : ${cluster.getConsumerGroups()}">
+											<tr>
+												<th scope="row" th:text="${consumerGroup.getGroupId()}"></th>
+												<td th:text="${consumerGroup.isSimpleConsumerGroup()}"></td>
+												<td th:text="${consumerGroup.getPartitionsOffsets().size()}"></td>
+												<td th:text="${consumerGroup.getState().get()}"></td>
+											</tr>
+										</th:block>
+									</th:block>
+								</tbody>
+							</table>
+						</div>
+						<!--Partitions-->
+						<div class="tab-pane row" id="cluster-consumers-nav-partitions" role="tabpanel">
+							<!-- Small Tables -->
+							<table id="alternative-pagination-consumer-partitions"
+							class="table nowrap dt-responsive align-middle table-hover table-bordered"
+							style="width:100%">
+								<thead>
+									<tr>
+										<th scope="col">Consumer</th>
+										<th scope="col">Topic</th>
+										<th scope="col">Committed Offset</th>
+										<th scope="col">Earliest Offset</th>
+										<th scope="col">Last Offset</th>
+										<th scope="col">Lag</th>
+									</tr>
+								</thead>
+								<tbody>
+									<th:block th:each="cluster : ${Clusters}">
+										<th:block th:each="consumerGroup : ${cluster.getConsumerGroups()}">
+											<th:block th:each="offset : ${consumerGroup.getPartitionsOffsets()}">
+												<tr>
+													<td th:text="${consumerGroup.getGroupId()}"></td>
+													<th scope="row" th:text="${offset.getTopicName()}"></th>
+													<td th:text="${offset.getCommittedOffset()}"></td>
+													<td th:text="${offset.getEarliestOffSet()}"></td>
+													<td th:text="${offset.getLastOffSet()}"></td>
+													<td th:text="${offset.getTotalLag()}"></td>
+												</tr>
+											</th:block>
+										</th:block>
+									</th:block>
+								</tbody>
+							</table>
+						</div>
+						<!-- end row -->
+					</div>
+				</div><!-- end card-body -->
+			</div>
+		</div>
+
+		<!--Consumers row end-->
+		
+		<!--Producers row start-->
+		<div class="col-xxl-12">
+			<h5 class="mb-12">Producers</h5>
+			<div class="card">
+				<div class="card-body">
+					<!-- Nav tabs -->
+					<ul class="nav nav-pills nav-customs nav-danger mb-12" role="tablist">
+						<li class="nav-item">
+							<a class="nav-link active" data-bs-toggle="tab" href="#cluster-producer-nav-producers"
+								role="tab">Producers</a>
+						</li>
+					</ul>
+					<!-- Tab panes -->
+					<div class="tab-content text-muted">
+						<!--Consumer groups-->
+						<div class="tab-pane row active" id="cluster-producer-nav-producers" role="tabpanel">
+							<!-- Small Tables -->
+							<table id="alternative-pagination-producers"
+							class="table nowrap dt-responsive align-middle table-hover table-bordered"
+							style="width:100%">
+								<thead>
+									<tr>
+										<th scope="col">Topic</th>
+										<th scope="col">Producer Id</th>
+										<th scope="col">Current Offset</th>
+									</tr>
+								</thead>
+								<tbody>
+									<th:block  th:each="cluster : ${Clusters}">
+										<th:block th:each="topic : ${cluster.getTopics()}">
+											<th:block th:each="partition : ${topic.getPartitions()}">
+												<th:block th:each="producer : ${partition.getProducers()}">
+													<tr>
+														<th scope="row" th:text="${topic.getTopicName()}"></th>
+														<td th:text="${producer.getProducerId()}"></td>
+														<td th:text="${producer.getCurrentTransactionStartOffset()}"></td>
+													</tr>
+												</th:block>
+											</th:block>
+										</th:block>
+									</th:block>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div><!-- end card-body -->
+			</div>
+		</div>
+
+		<!--Producers row end-->
 
 	</div>
 	

@@ -1,8 +1,9 @@
 package com.kafka.watcher.kafkawatcher.Models;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
+import org.springframework.util.unit.DataSize;
 
 public class BootstrapServers {
 
@@ -21,6 +22,11 @@ public class BootstrapServers {
     {
         this.isrPartitions.add(isrPartition);
     }
+
+    public Long getIsrPartitionsSize(){
+        return DataSize.ofBytes(this.isrPartitions.stream().mapToLong(f -> f.getReplicaSize()).sum()).toGigabytes();
+    }
+
     public void clearIsrPatitions(){
         this.isrPartitions.clear();
     }
@@ -36,6 +42,11 @@ public class BootstrapServers {
     {
         this.leaderPartitions.add(leadePartition);
     }
+
+    public Long getLeaderPartitionsSize(){
+        return DataSize.ofBytes(this.leaderPartitions.stream().mapToLong(f -> f.getReplicaSize()).sum()).toGigabytes();
+    }
+
 
     public void clearLeaderPartitions()
     {
@@ -53,6 +64,10 @@ public class BootstrapServers {
     public void addReplicaPartition(Partition replicaPartition)
     {
         this.replicaPartitions.add(replicaPartition);
+    }
+
+    public Long getReplicaPartitionsSize(){
+        return DataSize.ofBytes(this.replicaPartitions.stream().mapToLong(f -> f.getReplicaSize()).sum()).toGigabytes();
     }
 
     public void clearReplicaPartitions(){
