@@ -1,5 +1,6 @@
 package com.kafka.watcher.kafkawatcher.Models;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,13 +35,11 @@ public class ConsumerGroup {
         this.state = state;
     }
 
-    private List<PartitionsOffset> partitionsOffsets;
+    private List<PartitionsOffset> partitionsOffsets = new ArrayList<>();
     public List<PartitionsOffset> getPartitionsOffsets() {
         return partitionsOffsets;
     }
     public void setPartitionsOffsets(List<PartitionsOffset> partitionsOffsets) {
         this.partitionsOffsets = partitionsOffsets;
     }
-
-
 }

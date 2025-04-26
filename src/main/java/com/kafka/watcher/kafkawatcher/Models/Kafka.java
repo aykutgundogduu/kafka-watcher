@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+
 public class Kafka {
     
     public String name;
@@ -38,6 +39,5 @@ public class Kafka {
 
         return this.getBootstrapServers().stream().filter(f -> !f.isConnected()).toList();
     }
-
     
 }

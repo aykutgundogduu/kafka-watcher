@@ -12,6 +12,8 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.logging.Logger;
+import java.util.zip.DataFormatException;
 
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
@@ -54,8 +56,6 @@ import com.kafka.watcher.kafkawatcher.Models.PartitionsOffset;
 import com.kafka.watcher.kafkawatcher.Models.Producer;
 import com.kafka.watcher.kafkawatcher.Models.Topic;
 
-import groovyjarjarantlr4.v4.parse.GrammarTreeVisitor.astOperand_return;
-
 @Service
 public class ClusterService implements ClusterInterface {
     public static final int RETRY_TIMEOUT = 1;
@@ -97,12 +97,21 @@ public class ClusterService implements ClusterInterface {
             }
         }
     }
-
-    private boolean ConnectToCluster(Cluster cluster) throws Exception
+    public Map<String,Object> getClusterConfigs(Cluster cluster) throws Exception
     {
         Map<String, Object> configs = new HashMap<>();
+        if(cluster == null || cluster.getKafka() == null || cluster.getKafka().getBootstrapServers() == null || cluster.getKafka().getBootstrapServers().size() == 0)
+        {
+            throw new DataFormatException("Cluster has not configured expected");
+        }
+        System.out.println(String.format("Cluster try to connect to %s",cluster.getKafka().getBootstrapServers().get(0).getIpAndPort()));
         configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG,cluster.getKafka().getBootstrapServers().get(0).getIpAndPort());
-        cluster.setAdminClient(AdminClient.create(configs));
+        return configs;
+    }
+    private boolean ConnectToCluster(Cluster cluster) throws Exception
+    {
+        cluster.setAdminClient(AdminClient.create(getClusterConfigs(cluster)));
+        System.out.println(String.format("Succesfully connected to host : {%s}",cluster.getKafka().getBootstrapServers().get(0).getIpAndPort()));
         return this.checkClusterStatus(cluster, RETRY_TIMEOUT, TimeUnit.SECONDS);
     }
 
@@ -172,11 +181,10 @@ public class ClusterService implements ClusterInterface {
                     Map<TopicPartition, PartitionProducerState> procuders = allProducers.get();
                     List<PartitionProducerState> producerValues = procuders.values().stream().toList();
                     for (PartitionProducerState procs : producerValues) {
-                        List<Producer> pList = procs.activeProducers().stream().map(z-> new Producer(z.producerId(),z.producerEpoch() , z.currentTransactionStartOffset().orElse(0), z.lastSequence())).toList();
+                        List<Producer> pList = procs.activeProducers().stream().map(z-> new Producer(z.producerId(),z.producerEpoch() , z.currentTransactionStartOffset().orElse(0), z.lastSequence(),topic)).toList();
                         partition.setProducers(pList);
                     }
                 } catch (InterruptedException | ExecutionException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
 
@@ -484,7 +492,10 @@ public class ClusterService implements ClusterInterface {
     @Scheduled(fixedDelay = RETRY_INTERVAL, timeUnit = TimeUnit.SECONDS)
     public void checkClustersStatus() throws Exception {
         for (Cluster cluster : this.clusters) {
-            this.checkClusterStatus(cluster);
+            if(cluster.getNextPoolDate().isBefore(Instant.now()) || !cluster.isClusterStatusAvailable())
+            {
+                this.checkClusterStatus(cluster);
+            }
         }
     }
 

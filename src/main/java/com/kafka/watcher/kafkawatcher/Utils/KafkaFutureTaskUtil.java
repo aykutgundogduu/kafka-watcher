@@ -1,7 +1,5 @@
 package com.kafka.watcher.kafkawatcher.Utils;
 
-import java.util.concurrent.ExecutionException;
-
 import org.apache.kafka.common.KafkaFuture;
 import org.springframework.stereotype.Service;
 

@@ -11,7 +11,7 @@ public class ErrorController {
     
     @GetMapping("/404")
     public String get404() {
-        return "errors/404";
+        return "Errors/404";
         
     }
     

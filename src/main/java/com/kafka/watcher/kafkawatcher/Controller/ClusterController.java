@@ -15,6 +15,4 @@ public class ClusterController {
     public ClusterController(ClusterService clusterService) {
         this.clusterService = clusterService;
     }
-
-
 }

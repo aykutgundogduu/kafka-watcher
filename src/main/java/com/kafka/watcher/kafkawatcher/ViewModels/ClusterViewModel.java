@@ -1,5 +1,8 @@
 package com.kafka.watcher.kafkawatcher.ViewModels;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 
@@ -10,9 +13,7 @@ import com.kafka.watcher.kafkawatcher.Models.Topic;
 
 public class ClusterViewModel {
 
-    private String collectorDelimiter = "\", \"";
-    private String collectorPrefix = "\"";
-
+    public static final String DATE_FORMAT = "dd.MM.yyyy HH:mm";
 
     public int getTotalProducers(List<Topic> topics) {
         int count = 0;
@@ -42,4 +43,11 @@ public class ClusterViewModel {
                 .mapToLong(c -> c.getPartitionsOffsets().stream().filter(p -> Objects.nonNull(p))
                     .mapToLong(p -> p.getTotalLag()).sum()).sum();
     }
+
+    public String getFormattedDate(Instant date)
+    {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT).withZone(ZoneId.systemDefault());
+        return formatter.format(date);
+    }
+
 }

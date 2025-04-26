@@ -41,7 +41,12 @@
 									</th>
 									<th class="sort" data-sort="clusterName">Cluster Name</th>
 									<th class="sort" data-sort="brokerId">Broker Id</th>
-									<th class="sort" data-sort="partitionSize">Partition Size</th>
+									<th class="sort" data-sort="partitionSize">Partition Size / GB
+										<br>
+										<span>ISR /</span>
+										<span>LEAD /</span>
+										<span>REP</span>
+									</th></th>
 									<th class="sort" data-sort="partitionCount">Partition Count
 										<br>
 										<span>ISR /</span>
@@ -50,7 +55,7 @@
 									</th>
 									<th class="sort" data-sort="ipPort">IP/Port</th>
 									<th class="sort" data-sort="dns">DNS</th>
-									<th class="sort" data-sort="logDir">DNS</th>
+									<th class="sort" data-sort="logDir">Log directory</th>
 									<th class="sort" data-sort="action">GoTo</th>
 								</tr>
 							</thead>
@@ -66,7 +71,13 @@
 												</th>
 												<td class="clusterName"> <span th:text="${cluster.getName()}"></span></td>
 												<td class="brokerId"> <span th:text="${server.getNodeId()}"></span></td>
-												<td class="partitionSize"> <span th:text="${server.getLeaderPartition().size()}"></span></td>
+												<td class="partitionSize"> 
+													<span th:text="${server.getIsrPartitionsSize()}"></span>
+													<span>/</span>
+													<span th:text="${server.getLeaderPartitionsSize()}"></span>
+													<span>/</span>
+													<span th:text="${server.getReplicaPartitionsSize()}"></span>
+												</td>
 												<td class="partitionCounts"> 
 													<span th:text="${server.getIsrPartitions().size()}"></span>
 													<span>/</span>
