@@ -1,0 +1,27 @@
+server:
+    port: 8080
+kafkawatcher:
+    clusters:
+        -   name: "cluster-1"
+            kafka:
+                name: "Cluster 1 - Kafka"
+                bootstrapServers: 
+                    -   ipAddress: 172.17.29.195
+                        port: 9092
+                        dns: "WSL-1"
+            pooling:
+                poolingInterval: 5
+        -   name: "cluster-2"
+            kafka:
+                name: "Cluster 2 - Kafka"
+                bootstrapServers: 
+                    -   ipAddress: 172.17.29.195
+                        port: 9093
+                        dns: "WSL-2"  
+        -   name: "cluster-3"
+            kafka:
+                name: "Cluster 3 - Kafka"
+                bootstrapServers: 
+                    -   ipAddress: 172.17.29.195
+                        port: 9094
+                        dns: "WSL-3"    

@@ -1,0 +1,297 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout}">
+
+<th:block layout:fragment="pagetitle">
+	<!--page title-->
+	<div th:replace="~{partials/title-meta :: title-meta('Kafka Cluster Dashboard')}"></div>
+</th:block>
+
+<head>
+	<link href="/assets/libs/swiper/swiper-bundle.min.css" rel="stylesheet" />
+
+</head>
+
+<body>
+	<div layout:fragment="content" th:if="${topic}">
+		<h5 class="mb-12" >Topic Details - <span th:text="${topic.getTopicName()}"></span></h5>
+
+		<!--Multiple tab-->
+		<div class="col-xxl-12" th:if="${topic}">
+			<!-- Nav tabs -->
+			<ul class="nav nav-pills nav-customs nav-danger mb-12" role="tablist">
+				<li class="nav-item">
+					<a class="nav-link active" data-bs-toggle="tab" href="#topic-dashboard-nav-nodes"
+						role="tab">Partitions</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" data-bs-toggle="tab" href="#topic-dashboard-nav-consumers"
+						role="tab">Consumers</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" data-bs-toggle="tab" href="#topic-dashboard-nav-producers"
+						role="tab">Producers</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" data-bs-toggle="tab" href="#topic-dashboard-nav-messages"
+						role="tab">Messages</a>
+				</li>
+			</ul><!-- Tab panes -->
+			<div class="tab-content text-muted">
+				<!--Partitions-->
+				<div class="tab-pane active" id="topic-dashboard-nav-nodes" role="tabpanel">
+					<!--Widgets-->
+					<div class="row">
+						<div class="col-xl-12">
+							<div class="card crm-widget">
+								<div class="card-body p-0">
+									<div class="row row-cols-md-3 row-cols-1">
+										<div class="col col-lg border-end">
+											<div class="py-4 px-3">
+												<h5 class="text-muted text-uppercase fs-13">Partitions</i>
+												</h5>
+												<div class="d-flex align-items-center">
+													<div class="flex-shrink-0">
+														<i class="ri-pie-chart-line display-6 text-muted"></i>
+													</div>
+													<div class="flex-grow-1 ms-3">
+														<h2 class="mb-0"><span class="counter-value" th:data-target="${topic.getPartitions().size()}">0</span></h2>
+													</div>
+												</div>
+											</div>
+										</div><!-- end col -->
+										<div class="col col-lg border-end">
+											<div class="mt-3 mt-md-0 py-4 px-3">
+												<h5 class="text-muted text-uppercase fs-13">Replication Factor</i>
+												</h5>
+												<div class="d-flex align-items-center">
+													<div class="flex-shrink-0">
+														<i class=" ri-file-copy-2-line display-6 text-muted"></i>
+													</div>
+													<div class="flex-grow-1 ms-3">
+														<h2 class="mb-0"><span class="counter-value" th:data-target="${topic.getReplicationFactorCount()}">0</span></h2>
+													</div>
+												</div>
+											</div>
+										</div><!-- end col -->
+										<div class="col col-lg border-end">
+											<div class="mt-3 mt-md-0 py-4 px-3">
+												<h5 class="text-muted text-uppercase fs-13">In sync Replicas</i>
+												</h5>
+												<div class="d-flex align-items-center">
+													<div class="flex-shrink-0">
+														<i class="ri-pulse-line display-6 text-muted"></i>
+													</div>
+													<div class="flex-grow-1 ms-3">
+														<h2 class="mb-0"><span class="counter-value" th:data-target="${#aggregates.sum(topic.getPartitions.![getIsr().size()])}">0 </span> 
+															<span> of </span><span class="counter-value" th:data-target="${#aggregates.sum(topic.getPartitions.![getReplicaNodes().size()])}"></span></h2>
+													</div>
+												</div>
+											</div>
+										</div><!-- end col -->
+										<div class="col col-lg border-end">
+											<div class="mt-3 mt-lg-0 py-4 px-3">
+												<h5 class="text-muted text-uppercase fs-13">Segment Size / Count</i>
+												</h5>
+												<div class="d-flex align-items-center">
+													<div class="flex-shrink-0">
+														<i class="ri-install-fill display-6 text-muted"></i>
+													</div>
+													<div class="flex-grow-1 ms-3">
+														<h2 class="mb-0"><span class="counter-value" th:data-target="${topic.getTotalReplicaMessageSize()}">0</span> GB </span>
+															<span> / </span>
+															<span class="counter-value" th:data-target="${#aggregates.sum(topic.getPartitions.![getIsr().size()])}"> </span>
+														</h2>
+													</div>
+												</div>
+											</div>
+										</div><!-- end col -->
+										<div class="col col-lg">
+											<div class="mt-3 mt-lg-0 py-4 px-3">
+												<h5 class="text-muted text-uppercase fs-13">Message Count</i>
+												</h5>
+												<div class="d-flex align-items-center">
+													<div class="flex-shrink-0">
+														<i class="ri-message-3-line display-6 text-muted"></i>
+													</div>
+													<div class="flex-grow-1 ms-3">
+														<h2 class="mb-0"><span class="counter-value" th:data-target="${topic.getTotalMessageCount()}">0</span></h2>
+													</div>
+												</div>
+											</div>
+										</div><!-- end col -->
+									</div><!-- end row -->
+								</div><!-- end card body -->
+							</div><!-- end card -->
+						</div><!-- end col -->
+					</div><!-- end row -->
+					<!-- Small Tables -->
+					<table class="table table-sm table-nowrap">
+						<thead>
+							<tr>
+								<th scope="col">Partition ID</th>
+								<th scope="col">Replicas</th>
+								<th scope="col">First Offset</th>
+								<th scope="col">Commited Offset</th>
+								<th scope="col">Message Count</th>
+							</tr>
+						</thead>
+						<tbody th:each="partition : ${topic.getPartitions()}">
+							<tr>
+								<th scope="row" th:text="${partition.getPartitionId()}"></th>
+								<td th:text="${partition.getReplicas().size()}"></td>
+								<td th:text="${partition.getPartitionsOffset().getEarliestOffSet()}"></td>
+								<td th:text="${partition.getPartitionsOffset().getCommittedOffset()}"></td>
+								<td th:text="${partition.getPartitionsOffset().totalMessageCount()}"></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<!-- end Partitions -->
+				 
+				<!--Consumers-->
+				<div class="tab-pane" id="topic-dashboard-nav-consumers" role="tabpanel">
+					<!-- Small Tables -->
+					<table id="alternative-pagination-consumer-groups"
+					class="table nowrap dt-responsive align-middle table-hover table-bordered"
+					style="width:100%">
+						<thead>
+							<tr>
+								<th scope="col">Consumer</th>
+								<th scope="col">Topic</th>
+								<th scope="col">Committed Offset</th>
+								<th scope="col">Earliest Offset</th>
+								<th scope="col">Last Offset</th>
+								<th scope="col">Lag</th>
+							</tr>
+						</thead>
+						<tbody>
+							<th:block th:each="consumerGroup : ${cluster.getConsumerGroupsByTopic(topic.getTopicName())}">
+								<th:block th:each="offset : ${consumerGroup.getPartitionsOffsets()}">
+									<tr>
+										<td th:text="${consumerGroup.getGroupId()}"></td>
+										<th scope="row" th:text="${offset.getTopicName()}"></th>
+										<td th:text="${offset.getCommittedOffset()}"></td>
+										<td th:text="${offset.getEarliestOffSet()}"></td>
+										<td th:text="${offset.getLastOffSet()}"></td>
+										<td th:text="${offset.getTotalLag()}"></td>
+									</tr>
+								</th:block>
+							</th:block>
+						</tbody>
+					</table>
+				</div>
+				<!-- end Consumers -->
+				<!--Producers-->
+				<div class="tab-pane" id="topic-dashboard-nav-producers" role="tabpanel">
+					<!-- Small Tables -->
+					<table id="alternative-pagination-consumer-groups"
+					class="table nowrap dt-responsive align-middle table-hover table-bordered"
+					style="width:100%">
+						<thead>
+							<tr>
+								<th scope="col">Topic</th>
+								<th scope="col">Partition</th>
+								<th scope="col">Producer Id</th>
+								<th scope="col">Transaction Offset</th>
+								<th scope="col">Sequence</th>
+								<th scope="col">Epoch</th>
+							</tr>
+						</thead>
+						<tbody th:each="partition : ${topic.getPartitions()}">
+							<th:block th:each="producer : ${partition.getProducers()}">
+								<tr>
+									<th scope="row" th:text="${producer.getTopic().getTopicName()}"></th>
+									<td th:text="${partition.getPartitionId()}"></td>
+									<td th:text="${producer.getProducerId()}"></td>
+									<td th:text="${producer.getCurrentTransactionStartOffset()}"></td>
+									<td th:text="${producer.getSequence()}"></td>
+									<td th:text="${producer.getProducerEpoch()}"></td>
+								</tr>
+							</th:block>
+						</tbody>
+					</table>
+					
+				</div>
+				<!-- end Producers -->
+				<!--Messages-->
+				<div class="tab-pane" id="topic-dashboard-nav-messages" role="tabpanel">
+					<form>
+						<div class="row g-3">
+							<div class="col-sm-3">
+								<label th:text="${topic.getTopicName()}" name="topicName" type="text" class="form-control" placeholder="Topic Name" aria-label="topicName">
+							</div><!--end col-->
+							<div class="col-sm-3">
+								<input type="text" name="startOffset" class="form-control" placeholder="Start Offset" aria-label="startOffset">
+							</div><!--end col-->
+							<div class="col-sm-3">
+								<input type="text" name="endOffset" class="form-control" placeholder="End Offset" aria-label="endOffset">
+							</div><!--end col-->
+							<div class="col-sm-3">
+								<input type="text" name="rowCount" class="form-control" placeholder="Record Size" aria-label="keyword">
+							</div><!--end col-->
+							<div class="col-sm-2">
+								<input type="text" name="startIndex" class="form-control" placeholder="Start Page" aria-label="keyword">
+							</div><!--end col-->
+							<div class="col-sm-6">
+								<input type="text" name="searchString" class="form-control" placeholder="Keyword" aria-label="keyword">
+							</div><!--end col-->
+							<div class="col-sm-2">
+								<button type="button" class="btn btn-primary">Fecth Messages</button>
+							</div><!--end col-->
+						</div><!--end row-->
+					</form>
+					<!-- Small Tables -->
+					<table id="alternative-pagination-topic-messages"
+					class="table nowrap dt-responsive align-middle table-hover table-bordered"
+					style="width:100%">
+						<thead>
+							<tr>
+								<th scope="col">Topic Name</th>
+								<th scope="col">Partition</th>
+								<th scope="col">Leader Epoch</th>
+								<th scope="col">Offset</th>
+								<th scope="col">Message</th>
+							</tr>
+						</thead>
+						<tfoot>
+							<tr>
+								<th scope="col">Topic Name</th>
+								<th scope="col">Partition</th>
+								<th scope="col">Leader Epoch</th>
+								<th scope="col">Offset</th>
+								<th scope="col">Message</th>
+							</tr>
+						</tfoot>
+					</table>
+					
+				</div>
+				<!-- end Messages -->
+			</div>
+		</div>
+		<!-- end row -->
+
+	</div>
+	
+	<th:block layout:fragment="pagejs">
+
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+		integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+		<!--datatable js-->
+		<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+		<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+		<script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+		<script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+		<!-- apexcharts -->
+		<script src="/assets/libs/apexcharts/apexcharts.min.js"></script>
+		<!--Modal init-->
+		<script src="/assets/js/pages/kafka/kafka-modal-init.js"></script>
+		<!--Kafka chart init-->
+		<script src="/assets/js/pages/kafka/kafka-charts-init.js"></script>
+		<script src="/assets/js/pages/kafka/kafka-form.js"></script>
+		<script src="/assets/js/pages/kafka/kafka-datatables-init.js"></script>
+	</th:block>
+</body>
+
+</html>
