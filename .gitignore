@@ -3,8 +3,11 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+<<<<<<< HEAD
 *.jar
 !libs/**/*.jar
+=======
+>>>>>>> c1819aaf23554631e47ccd90fac3a9d4054ad89d
 
 ### STS ###
 .apt_generated
@@ -33,4 +36,7 @@ build/
 
 ### VS Code ###
 .vscode/
+<<<<<<< HEAD
 kafka-watcher.jar
+=======
+>>>>>>> c1819aaf23554631e47ccd90fac3a9d4054ad89d
