@@ -1,5 +1,0 @@
-*.jar filter=lfs diff=lfs merge=lfs -text
-<<<<<<< HEAD
-kafka-watcher.jar filter=lfs diff=lfs merge=lfs -text
-=======
->>>>>>> c1819aaf23554631e47ccd90fac3a9d4054ad89d
