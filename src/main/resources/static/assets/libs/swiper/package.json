@@ -170,6 +170,7 @@
   },
   "dependencies": {
     "dom7": "^4.0.4",
-    "ssr-window": "^4.0.2"
+    "ssr-window": "^4.0.2",
+    "swiper": "file:"
   }
 }

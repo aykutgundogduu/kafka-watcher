@@ -107,6 +107,7 @@
     "webpack-hot-middleware": "^2.25.1"
   },
   "dependencies": {
+    "choices.js": "file:",
     "deepmerge": "^4.2.2",
     "fuse.js": "^3.4.6",
     "redux": "^4.1.2"

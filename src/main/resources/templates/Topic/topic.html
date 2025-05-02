@@ -216,29 +216,59 @@
 				<!-- end Producers -->
 				<!--Messages-->
 				<div class="tab-pane" id="topic-dashboard-nav-messages" role="tabpanel">
-					<form>
+					<form class="fetch-message" data-target-datatable-id="alternative-pagination-topic-messages">
 						<div class="row g-3">
 							<div class="col-sm-3">
-								<label th:text="${topic.getTopicName()}" name="topicName" type="text" class="form-control" placeholder="Topic Name" aria-label="topicName">
+								<div class="input-group">
+									<span class="input-group-text" id="inputGroup-sizing-sm">Cluster Name</span>
+									<input th:value="${cluster.getName()}" name="clusterName" type="text" class="form-control" placeholder="Cluster Name" aria-label="topicName" readonly disabled>
+								</div><!--end col-->
 							</div><!--end col-->
 							<div class="col-sm-3">
-								<input type="text" name="startOffset" class="form-control" placeholder="Start Offset" aria-label="startOffset">
+								<div class="input-group">
+									<span class="input-group-text" id="inputGroup-sizing-sm">Topic Name</span>
+									<input th:value="${topic.getTopicName()}" name="topicName" type="text" class="form-control" placeholder="Topic Name" aria-label="topicName" readonly disabled>
+								</div><!--end col-->
 							</div><!--end col-->
 							<div class="col-sm-3">
-								<input type="text" name="endOffset" class="form-control" placeholder="End Offset" aria-label="endOffset">
+								<div class="input-group">
+									<span class="input-group-text" id="inputGroup-sizing-sm">Start Offset</span>
+									<input type="text" name="startOffset" class="form-control" placeholder="0" aria-label="startOffset">
+								</div>
 							</div><!--end col-->
 							<div class="col-sm-3">
-								<input type="text" name="rowCount" class="form-control" placeholder="Record Size" aria-label="keyword">
+								<div class="input-group">
+								<span class="input-group-text" id="inputGroup-sizing-sm">End offset</span>
+								<input type="text" name="endOffset" class="form-control" placeholder="1000" aria-label="endOffset">
+								</div>
+							</div><!--end col-->
+							<div class="col-sm-3">
+								<div class="input-group">
+									
+								<span class="input-group-text" id="inputGroup-sizing-sm">Record Size</span>
+								<input type="text" name="rowCount" class="form-control" placeholder="100" aria-label="keyword">
+								</div>
 							</div><!--end col-->
 							<div class="col-sm-2">
-								<input type="text" name="startIndex" class="form-control" placeholder="Start Page" aria-label="keyword">
+								<div class="input-group">
+									
+								<span class="input-group-text" id="inputGroup-sizing-sm">Start Page</span>
+								<input type="text" name="startIndex" class="form-control" placeholder="1" aria-label="keyword">
+								</div>
 							</div><!--end col-->
 							<div class="col-sm-6">
-								<input type="text" name="searchString" class="form-control" placeholder="Keyword" aria-label="keyword">
+								<div class="input-group">
+									
+								<span class="input-group-text" id="inputGroup-sizing-sm">Search String</span>
+								<input type="text" name="searchString" class="form-control" placeholder="" aria-label="keyword">
+								</div>
 							</div><!--end col-->
 							<div class="col-sm-2">
-								<button type="button" class="btn btn-primary">Fecth Messages</button>
+								<div class="input-group">
+									
+								<button id="fetch-message" type="submit" class="btn btn-primary fetch-message" >Fecth Messages</button>
 							</div><!--end col-->
+								</div>
 						</div><!--end row-->
 					</form>
 					<!-- Small Tables -->

@@ -8,10 +8,30 @@ document.addEventListener('DOMContentLoaded', function () {
     $('#alternative-pagination-producers').DataTable();
     $('#alternative-pagination-producer-partitions').DataTable();
 
+
+    //Set find message trigger
+    $('.fetch-message').submit(function(e)
+    {
+        e.preventDefault(); //Prevent the normal submission action
+        var form = this
+        
+        var dataTableId = form.getAttribute('data-target-datatable-id')
+        var clusterName = form.querySelector('[name="clusterName"]').value
+        var topicName = form.querySelector('[name="topicName"]').value
+        var startOffset = form.querySelector('[name="startOffset"]').value
+        var endOffset = form.querySelector('[name="endOffset"]').value
+        var rowCount = form.querySelector('[name="rowCount"]').value
+        var startIndex = form.querySelector('[name="startIndex"]').value
+        var searchString = form.querySelector('[name="searchString"]').value
+
+        fecthMessages(dataTableId,startOffset,endOffset,topicName,clusterName,startIndex,rowCount,searchString)
+
+    });
 });
 
 
-function fecthMessages(startOffset,endOffset,topicName,clusterName,startIndex,countRow,searchString)
+
+function fecthMessages(targetDataTable,startOffset,endOffset,topicName,clusterName,startIndex,rowCount,searchString)
 {
     let jsonValue = {
         "startOffset": startOffset,
@@ -19,11 +39,11 @@ function fecthMessages(startOffset,endOffset,topicName,clusterName,startIndex,co
         "topicName" : topicName,
         "clusterName" : clusterName,
         "startIndex" : startIndex,
-        "countRow" : countRow,
+        "countRow" : rowCount,
         "searchString" : searchString
     }
-    
-    let messagingTable= new DataTable('#alternative-pagination-topic-messages',{
+    //alternative-pagination-topic-messages
+    let messagingTable= new DataTable('#'+ targetDataTable,{
         ajax: {
             type: 'POST',
             url: '/api/v1/message/fetch',
@@ -44,7 +64,8 @@ function fecthMessages(startOffset,endOffset,topicName,clusterName,startIndex,co
             { data: 'value',title: 'Message'}
         ],
         processing: true,
-        serverSide: false
+        serverSide: false,
+        destroy: true
     });
 }
 

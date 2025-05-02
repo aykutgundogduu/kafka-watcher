@@ -9,7 +9,7 @@ import com.kafka.watcher.kafkawatcher.Models.Records;
 public class FetchMessageModel {
     
     private Long startOffset = 0L;
-    private Long endOffset = 0L;
+    private Long endOffset = 1000L;
     private String topicName = "";
     private String clusterName = "";
     private String searchString = "";
@@ -36,6 +36,7 @@ public class FetchMessageModel {
     }
 
     public void setCountRow(int countRow) {
+        if(countRow == 0) return;
         this.countRow = countRow;
     }
 
@@ -72,6 +73,8 @@ public class FetchMessageModel {
     }
 
     public void setStartOffset(Long startOffset) {
+        if(startOffset == null) return;
+        if(startOffset == 0 )return;
         this.startOffset = startOffset;
     }
 
@@ -80,6 +83,7 @@ public class FetchMessageModel {
     }
 
     public void setEndOffset(Long endOffset) {
+        if(endOffset == null) return;
         this.endOffset = endOffset;
     }
 
